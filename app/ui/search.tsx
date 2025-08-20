@@ -12,6 +12,8 @@ export default function Search({ placeholder }: { placeholder: string }) {
 	/** debounce 적용 */
 	const handleSearch = useDebouncedCallback((term: string) => {
 		const params = new URLSearchParams(searchParams);
+		params.set('page', '1'); // 페이지 이동 후 재검색 시 page를 1로 리셋
+
 		if (term) {
 			params.set('query', term);
 		} else {

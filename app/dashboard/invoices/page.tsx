@@ -5,6 +5,7 @@ import { CreateInvoice } from '@/app/ui/invoices/buttons';
 import { lusitana } from '@/app/ui/fonts';
 import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
+import { fetchInvoicesPages } from '@/app/lib/data';
 
 /** Page 컴포넌트는 searchParams라는 props를 허용하기 때문에 현재 URL params를 Table 컴포넌트에 넘겨줄 수 있다.
  * - useSearchParams() 는 클라이언트 컴포넌트에서
@@ -20,6 +21,7 @@ export default async function Page(props: {
 	const searchParams = await props.searchParams;
 	const query = searchParams?.query || '';
 	const currentPage = Number(searchParams?.page) || 1;
+	const totalPages = await fetchInvoicesPages(query);
 
 	return (
 		<div className="w-full">
@@ -34,7 +36,7 @@ export default async function Page(props: {
 				<Table query={query} currentPage={currentPage} />
 			</Suspense>
 			<div className="mt-5 flex w-full justify-center">
-				{/* <Pagination totalPages={totalPages} /> */}
+				<Pagination totalPages={totalPages} />
 			</div>
 		</div>
 	);
