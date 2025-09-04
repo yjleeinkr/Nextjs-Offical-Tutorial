@@ -29,10 +29,14 @@ export async function createInvoice(formData: FormData) {
 	const amountInCents = amount * 100; // 자바스크립트 부동소수점 오류 제거를 위해 cents 단위로 전환
 	const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD 형식으로
 
-	await sql`
+	try {
+		await sql`
 		INSERT INTO invoices (customer_id, amount, status, date)
 		VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
 	`;
+	} catch (err) {
+		console.error(err);
+	}
 
 	// DB 업데이트 후 /dashboard/invoices는 재검증되었고, 새로운 데이터가 페칭된다.
 	revalidatePath('/dashboard/invoices');
@@ -49,15 +53,24 @@ export async function updateInvoice(id: string, formData: FormData) {
 	});
 
 	const amountInCents = amount * 100;
-
-	await sql`
+	try {
+		await sql`
 		UPDATE invoices
 		SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
 		WHERE id = ${id}
 	`;
+	} catch (err) {
+		console.error(err);
+	}
 
 	revalidatePath('/dashboard/invoices');
 	redirect('/dashboard/invoices');
+	/** redirect
+	 * redirect는 내부적으로 에러를 던지는 방식으로 동작한다.
+	 * 그래서 try/catch 블록 안에서 redirect를 호출하면, catch에서 그 에러를 잡아버린다.
+	 * 그러면 의도대로 리다이렉트되지 않고, 예외 처리 로직이 실행될 수 있다.
+	 * 따라서, redirect는 try/catch 블록 밖에서 호출한다.
+	 */
 }
 
 export async function deleteInvoice(id: string) {
