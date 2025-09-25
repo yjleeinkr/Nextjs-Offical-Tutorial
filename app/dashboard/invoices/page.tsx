@@ -6,6 +6,12 @@ import { lusitana } from '@/app/ui/fonts';
 import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 import { fetchInvoicesPages } from '@/app/lib/data';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+	//   title: 'Invoices | Acme Dashboard', // 이렇게 해도 되지만 모든 페이지 내에서 공통된 부분이 중복적으로 들어간다면 RootLayout에서 title.template을 사용하는 게 좋다.
+	title: 'Invoices', // title template 적용 후
+};
 
 /** Page 컴포넌트는 searchParams라는 props를 허용하기 때문에 현재 URL params를 Table 컴포넌트에 넘겨줄 수 있다.
  * - useSearchParams() 는 클라이언트 컴포넌트에서
